@@ -23,10 +23,24 @@ To use the hosted app, head to [https://langchain-text-splitter.streamlit.app/](
 
 ## Running locally
 
-To run locally, first set up the environment by cloning the repo and running:
+To run locally, first set up the environment by cloning the repo.
+
+Create a virtual env:
 
 ```shell
-pip install -r requirements
+python -m venv .venv
+```
+
+Start the virtual env:
+
+```shell
+.\.venv\Scripts\activate
+```
+
+Install the requirements:
+
+```shell
+pip install -r requirements.txt
 ```
 
 Then, run the Streamlit app with:
