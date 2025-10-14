@@ -1,6 +1,5 @@
 import streamlit as st
-from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter, Language
-import code_snippets as code_snippets
+from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter, Language, MarkdownHeaderTextSplitter, MarkdownTextSplitter
 import tiktoken
 import markdownify
 from bs4 import BeautifulSoup
@@ -38,7 +37,7 @@ with col3:
         "Length Function", ["Characters", "Tokens"]
     )
 
-splitter_choices = ["RecursiveCharacter", "Character"] + [str(v) for v in Language]
+splitter_choices = ["RecursiveCharacter", "Character", "MarkdownTextSplitter", "MarkdownHeaderTextSplitter"] + [str(v) for v in Language]
 
 with col4:
     splitter_choice = st.selectbox(
@@ -47,7 +46,6 @@ with col4:
 
 if length_function == "Characters":
     length_function = len
-    length_function_str = code_snippets.CHARACTER_LENGTH
 elif length_function == "Tokens":
     enc = tiktoken.get_encoding("cl100k_base")
 
@@ -55,39 +53,11 @@ elif length_function == "Tokens":
     def length_function(text: str) -> int:
         return len(enc.encode(text))
 
-
-    length_function_str = code_snippets.TOKEN_LENGTH
 else:
     raise ValueError
-
-if splitter_choice == "Character":
-    import_text = code_snippets.CHARACTER.format(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-        length_function=length_function_str
-    )
-
-elif splitter_choice == "RecursiveCharacter":
-    import_text = code_snippets.RECURSIVE_CHARACTER.format(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-        length_function=length_function_str
-    )
-
-elif "Language." in splitter_choice:
-    import_text = code_snippets.LANGUAGE.format(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-        language=splitter_choice,
-        length_function=length_function_str
-    )
-else:
-    raise ValueError
-
-st.info(import_text)
 
 # Box for pasting text
-doc = st.text_area("Manually Paste Source Text")
+doc = st.text_area("Paste Source Text")
 
 # Data preprocessing
 col5, col6 = st.columns([3, 1], vertical_alignment="bottom", )
@@ -158,7 +128,6 @@ with col6:
     if(st.button("Markdownify Text")):
         doc = markdownify.markdownify(doc)
 
-st.subheader("Text Preview")
 st.markdown(doc)
 
 # Choose splitter
@@ -177,13 +146,35 @@ elif "Language." in splitter_choice:
                                                             chunk_size=chunk_size,
                                                             chunk_overlap=chunk_overlap,
                                     length_function=length_function)
+elif "MarkdownHeaderText" in splitter_choice:
+    splitter = MarkdownHeaderTextSplitter(
+        [("#", "Header 1"),
+         ("##", "Header 2"),
+         ("###", "Header 3"),
+         ("####", "Header 4"),
+         ("#####", "Header 5"),
+         ("######", "Header 6")],
+        strip_headers=False)
+elif "MarkdownText" in splitter_choice:
+    splitter = MarkdownTextSplitter(chunk_size=chunk_size,
+                                   chunk_overlap=chunk_overlap,
+                                   length_function=length_function)
 else:
     raise ValueError
-# Split the text
-splits = splitter.split_text(doc)
 
-# Display the splits
-for idx, split in enumerate(splits, start=1):
-    st.text_area(
-        f"Split {idx}", split, height=200
-    )
+# Split the text
+if doc != "":
+    splits = splitter.split_text(doc)
+
+    if "MarkdownHeaderText" in splitter_choice:
+        new_splits = []
+        for split in splits:
+            new_split = split.page_content
+            new_splits.append(new_split)
+        splits = new_splits
+        
+    # Display the splits
+    for idx, split in enumerate(splits, start=1):
+        st.text_area(
+            f"Split {idx}", split, height=200
+        ) 
