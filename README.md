@@ -1,7 +1,5 @@
 # Text Split Explorer
 
-![ui.png](ui.png)
-
 Many of the most important LLM applications involve connecting LLMs to external sources of data.
 A prerequisite to doing this is to ingest data into a format where LLMs can easily connect to them.
 Most of the time, that means ingesting data into a vectorstore.
@@ -16,10 +14,6 @@ This repo (and associated Streamlit app) are designed to help explore different 
 You can adjust different parameters and choose different types of splitters.
 By pasting a text file, you can apply the splitter to that text and see the resulting splits.
 You are also shown a code snippet that you can copy and use in your application
-
-## Hosted App
-
-To use the hosted app, head to [https://langchain-text-splitter.streamlit.app/](https://langchain-text-splitter.streamlit.app/)
 
 ## Running locally
 
