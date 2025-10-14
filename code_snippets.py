@@ -9,8 +9,6 @@ splitter = CharacterTextSplitter(
     chunk_overlap={chunk_overlap},
     length_function=length_function,
 )
-text = "foo bar"
-splits = splitter.split_text(text)
 """
 
 RECURSIVE_CHARACTER = """```python
@@ -27,8 +25,6 @@ splitter = RecursiveCharacterTextSplitter(
     chunk_overlap={chunk_overlap},
     length_function=length_function,
 )
-text = "foo bar"
-splits = splitter.split_text(text)
 """
 
 LANGUAGE = """```python
@@ -42,8 +38,6 @@ splitter = RecursiveCharacterTextSplitter.from_language(
     chunk_overlap={chunk_overlap},
     length_function=length_function,
 )
-text = "foo bar"
-splits = splitter.split_text(text)
 """
 
 CHARACTER_LENGTH = "length_function = len"

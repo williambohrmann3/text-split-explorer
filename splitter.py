@@ -2,6 +2,8 @@ import streamlit as st
 from langchain.text_splitter import RecursiveCharacterTextSplitter, CharacterTextSplitter, Language
 import code_snippets as code_snippets
 import tiktoken
+import markdownify
+from bs4 import BeautifulSoup
 
 
 # Streamlit UI
@@ -40,7 +42,7 @@ splitter_choices = ["RecursiveCharacter", "Character"] + [str(v) for v in Langua
 
 with col4:
     splitter_choice = st.selectbox(
-        "Select a Text Splitter", splitter_choices
+        "Text Splitter", splitter_choices
     )
 
 if length_function == "Characters":
@@ -85,26 +87,98 @@ else:
 st.info(import_text)
 
 # Box for pasting text
-doc = st.text_area("Paste your text here:")
+doc = st.text_area("Manually Paste Source Text")
+
+# Data preprocessing
+col5, col6 = st.columns([3, 1], vertical_alignment="bottom", )
+with col5:
+    page_build_system = st.selectbox("Page Build System", ["None", "Gatsby", "DocC", "DocFX", "dokka", "dart doc", "Sphinx"])
+
+    page_soup = BeautifulSoup(doc, "html.parser")
+    
+    if page_build_system == "Gatsby":
+        article = page_soup.find(id="skip-to-content")
+        for tooltip in article.find_all("calcite-tooltip"):
+            tooltip.extract()
+        for calcite_button in article.find_all("calcite-button"):
+            calcite_button.extract()
+        for calcite_dropdown in article.find_all("calcite-dropdown"):
+            calcite_dropdown.extract()
+        for button in article.find_all("button"):
+            button.extract()
+        for image in article.find_all("img"):
+            image.extract()
+        for link_popup in article.find_all(class_="sidebar-container"):
+            link_popup.extract()
+        for line_number in article.find_all(class_="react-syntax-highlighter-line-number"):
+            line_number.extract()
+        for a in article.find_all("a", href=True):
+            a.attrs.pop("href", None)
+        for card in article.find_all(class_="card"):
+            card.extract()
+        doc = str(article).replace("Go to tutorial", "")
+
+    elif page_build_system == "DocC":
+        article = page_soup.find(id="app-main")
+        for wbr in article.find_all("wbr"):
+            wbr.extract()
+        for a in article.find_all("a", href=True):
+            a.attrs.pop("href", None)
+        doc = str(article)
+
+    elif page_build_system == "DocFX":
+        article = page_soup.find(id="_content")
+        for wbr in article.find_all("wbr"):
+            wbr.extract()
+        for a in article.find_all("a", href=True):
+            a.attrs.pop("href", None)
+        doc = str(article)
+
+    elif page_build_system == "dokka":
+        article = page_soup.find(id="main")
+        for a in article.find_all("a", href=True):
+            a.attrs.pop("href", None)
+        doc = str(article)
+
+    elif page_build_system == "dart doc":
+        article = page_soup.find(id="dartdoc-main-content")
+        for a in article.find_all("a", href=True):
+            a.attrs.pop("href", None)
+        doc = str(article)
+
+    elif page_build_system == "Sphinx":
+        article = page_soup.find(class_="document")
+        for header_link in article.find_all(class_="headerlink"):
+            header_link.extract()
+        for a in article.find_all("a", href=True):
+            a.attrs.pop("href", None)
+        doc = str(article)
+
+with col6:
+    if(st.button("Markdownify Text")):
+        doc = markdownify.markdownify(doc)
+
+st.subheader("Text Preview")
+st.markdown(doc)
 
 # Split text button
 if st.button("Split Text"):
     # Choose splitter
     if splitter_choice == "Character":
         splitter = CharacterTextSplitter(separator = "\n\n",
-                                         chunk_size=chunk_size, 
-                                         chunk_overlap=chunk_overlap,
-                                         length_function=length_function)
+                                        chunk_size=chunk_size, 
+                                        chunk_overlap=chunk_overlap,
+                                        length_function=length_function)
     elif splitter_choice == "RecursiveCharacter":
         splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, 
-                                                  chunk_overlap=chunk_overlap,
-                                         length_function=length_function)
+                                                chunk_overlap=chunk_overlap,
+                                        length_function=length_function)
     elif "Language." in splitter_choice:
         language = splitter_choice.split(".")[1].lower()
         splitter = RecursiveCharacterTextSplitter.from_language(language,
                                                                 chunk_size=chunk_size,
                                                                 chunk_overlap=chunk_overlap,
-                                         length_function=length_function)
+                                        length_function=length_function)
     else:
         raise ValueError
     # Split the text
