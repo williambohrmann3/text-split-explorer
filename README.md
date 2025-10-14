@@ -48,3 +48,9 @@ Then, run the Streamlit app with:
 ```shell
 streamlit run splitter.py
 ```
+
+To update the requirements, run:
+
+```shell
+pip freeze > requirements.txt
+```
