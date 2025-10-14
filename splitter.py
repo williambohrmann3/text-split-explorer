@@ -161,31 +161,29 @@ with col6:
 st.subheader("Text Preview")
 st.markdown(doc)
 
-# Split text button
-if st.button("Split Text"):
-    # Choose splitter
-    if splitter_choice == "Character":
-        splitter = CharacterTextSplitter(separator = "\n\n",
-                                        chunk_size=chunk_size, 
-                                        chunk_overlap=chunk_overlap,
-                                        length_function=length_function)
-    elif splitter_choice == "RecursiveCharacter":
-        splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, 
-                                                chunk_overlap=chunk_overlap,
-                                        length_function=length_function)
-    elif "Language." in splitter_choice:
-        language = splitter_choice.split(".")[1].lower()
-        splitter = RecursiveCharacterTextSplitter.from_language(language,
-                                                                chunk_size=chunk_size,
-                                                                chunk_overlap=chunk_overlap,
-                                        length_function=length_function)
-    else:
-        raise ValueError
-    # Split the text
-    splits = splitter.split_text(doc)
+# Choose splitter
+if splitter_choice == "Character":
+    splitter = CharacterTextSplitter(separator = "\n\n",
+                                    chunk_size=chunk_size, 
+                                    chunk_overlap=chunk_overlap,
+                                    length_function=length_function)
+elif splitter_choice == "RecursiveCharacter":
+    splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, 
+                                            chunk_overlap=chunk_overlap,
+                                    length_function=length_function)
+elif "Language." in splitter_choice:
+    language = splitter_choice.split(".")[1].lower()
+    splitter = RecursiveCharacterTextSplitter.from_language(language,
+                                                            chunk_size=chunk_size,
+                                                            chunk_overlap=chunk_overlap,
+                                    length_function=length_function)
+else:
+    raise ValueError
+# Split the text
+splits = splitter.split_text(doc)
 
-    # Display the splits
-    for idx, split in enumerate(splits, start=1):
-        st.text_area(
-            f"Split {idx}", split, height=200
-        )
+# Display the splits
+for idx, split in enumerate(splits, start=1):
+    st.text_area(
+        f"Split {idx}", split, height=200
+    )
