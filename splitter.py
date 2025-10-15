@@ -86,6 +86,17 @@ with col5:
             a.attrs.pop("href", None)
         for card in article.find_all(class_="card"):
             card.extract()
+        for svg in article.find_all("svg"):
+            aria_label = svg.get("aria-label", "")
+            if aria_label:
+                match aria_label:
+                    case "Supported":
+                        svg.replace_with("✅")
+                    case "Not Supported":
+                        svg.replace_with("❌")
+                    case "Partially Supported (see notes)":
+                        svg.replace_with("⚠️")
+
         doc = str(article).replace("Go to tutorial", "")
 
     elif page_build_system == "DocC":
