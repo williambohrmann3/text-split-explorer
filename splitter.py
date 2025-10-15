@@ -75,7 +75,10 @@ with col5:
         for calcite_dropdown in article.find_all("calcite-dropdown"):
             calcite_dropdown.extract()
         for button in article.find_all("button"):
-            button.extract()
+            button_id = button.get("id", "")
+            # Account for accordions - they have important text on the buttons.
+            if not button_id or "AccordionItem-" not in button_id:
+                button.extract()
         for image in article.find_all("img"):
             image.extract()
         for link_popup in article.find_all(class_="sidebar-container"):
