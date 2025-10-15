@@ -22,7 +22,7 @@ with col1:
 with col2:
     # Setting the max value of chunk_overlap based on chunk_size
     chunk_overlap = st.number_input(
-        min_value=1,
+        min_value=0,
         max_value=chunk_size - 1,
         label="Chunk Overlap",
         value=int(chunk_size * 0.2),
