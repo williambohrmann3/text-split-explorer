@@ -68,7 +68,7 @@ with col5:
     
     if page_build_system == "Gatsby":
         article = page_soup.find(id="skip-to-content")
-        
+
         for tab_nav in article.find_all(class_="tab-nav"):
             buttons = []
             for button in tab_nav.find_all("button"):
@@ -110,6 +110,7 @@ with col5:
             a.attrs.pop("href", None)
         for card in article.find_all(class_="card"):
             card.extract()
+        
         for svg in article.find_all("svg"):
             aria_label = svg.get("aria-label", "")
             if aria_label:
@@ -120,6 +121,16 @@ with col5:
                         svg.replace_with("❌")
                     case "Partially Supported (see notes)":
                         svg.replace_with("⚠️")
+        
+        for calcite_icon in article.find_all("calcite-icon"):
+            aria_label = calcite_icon.get("aria-label", "")
+            if aria_label:
+                match aria_label:
+                    case "Warning":
+                        calcite_icon.replace_with("⚠️")
+                    case "Note":
+                        calcite_icon.replace_with("ℹ️")
+                    
 
         doc = str(article).replace("Go to tutorial", "")
 
