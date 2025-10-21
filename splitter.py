@@ -99,30 +99,6 @@ with col5:
                         svg.replace_with("❌")
                     case "Partially Supported (see notes)":
                         svg.replace_with("⚠️")
-        for calcite_icon in article.find_all("calcite-icon"):
-            icon_name = calcite_icon.get("icon", "")
-            if icon_name:
-                match icon_name:
-                    case "open-book":
-                        calcite_icon.replace_with("📖")
-                    case "information-f":
-                        calcite_icon.replace_with("ℹ️")
-                    case "system-management":
-                        calcite_icon.replace_with("🛠️")
-                    case "map":
-                        calcite_icon.replace_with("🗺️")
-                    case "check-square":
-                        calcite_icon.replace_with("✔️")
-                    case "code":
-                        calcite_icon.replace_with("</>")
-                    case "billing":
-                        calcite_icon.replace_with("💳")
-                    case "check-shield":
-                        calcite_icon.replace_with("🛡️")
-                    case "book":
-                        calcite_icon.replace_with("📕")
-                    case "exclamation-mark-circle":
-                        calcite_icon.replace_with("❗")
 
         doc = str(article).replace("Go to tutorial", "")
 
