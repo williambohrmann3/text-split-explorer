@@ -145,6 +145,8 @@ with col5:
                         calcite_icon.replace_with("ℹ️")
                     case "Attention":
                         calcite_icon.replace_with("❗")
+                    case "Topic":
+                        calcite_icon.replace_with("📖")
 
         doc = str(article).replace("Go to tutorial", "")
 
