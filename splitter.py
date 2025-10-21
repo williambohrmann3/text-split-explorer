@@ -67,7 +67,9 @@ with col5:
     page_soup = BeautifulSoup(doc, "html.parser")
     
     if page_build_system == "Gatsby":
-        article = page_soup.find(id="skip-to-content")
+        article = page_soup.find(id="main")
+        sidebar_container = article.find(class_="sidebar-container")
+        sidebar_container.extract()
 
         for tab_nav in article.find_all(class_="tab-nav"):
             buttons = []
