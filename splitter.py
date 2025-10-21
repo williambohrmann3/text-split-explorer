@@ -106,6 +106,15 @@ with col5:
             iframe.extract()
         for line_number in article.find_all(class_="react-syntax-highlighter-line-number"):
             line_number.extract()
+
+        # Indicate diff.
+        for code_line in article.find_all("span", attrs={"style": "--code-line-bg:var(--color-code-line-added-background);--line-number-digits:-1rem"}):
+            code_line.replace_with(f"🟢{code_line.text}")
+        for code_line in article.find_all("span", attrs={"style": "--code-line-bg:var(--color-code-line-removed-background);--line-number-digits:-1rem"}):
+            code_line.replace_with(f"🔴{code_line.text}")
+        for code_line in article.find_all("span", attrs={"style": "--code-line-bg:var(--color-code-line-changed-background);--line-number-digits:-1rem"}):
+            code_line.replace_with(f"🟡{code_line.text}")
+
         for a in article.find_all("a", href=True):
             a.attrs.pop("href", None)
         for card in article.find_all(class_="card"):
