@@ -102,8 +102,6 @@ with col5:
                 button.extract()
         for image in article.find_all("img"):
             image.extract()
-        for link_popup in article.find_all(class_="sidebar-container"):
-            link_popup.extract()
         for iframe in article.find_all("iframe"):
             iframe.extract()
         for line_number in article.find_all(class_="react-syntax-highlighter-line-number"):
