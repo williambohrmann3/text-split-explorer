@@ -68,6 +68,27 @@ with col5:
     
     if page_build_system == "Gatsby":
         article = page_soup.find(id="skip-to-content")
+        
+        for tab_nav in article.find_all(class_="tab-nav"):
+            buttons = []
+            for button in tab_nav.find_all("button"):
+                buttons.append(f"###### {button.text}")
+                button.extract()
+            tab_div = tab_nav.parent
+            tab_contents = []
+            open_tab_content = tab_div.find(class_="tab-content block")
+            tab_contents.append(open_tab_content)
+            open_tab_content.extract()
+            for tab_content in tab_div.find_all(class_="tab-content hidden"):
+                tab_contents.append(tab_content)
+                tab_content.extract()
+            if len(buttons) != len(tab_contents):
+                continue
+            # Rebuild linearly.
+            for i in range(0, len(buttons)):
+                tab_div.append(buttons[i])
+                tab_div.append(tab_contents[i])  
+                
         for tooltip in article.find_all("calcite-tooltip"):
             tooltip.extract()
         for calcite_button in article.find_all("calcite-button"):
